@@ -1678,6 +1678,32 @@ button {
 }
 
 
+/* Avatar Preset Modal Styling */
+.avatar-presets-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.avatar-preset-option {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: var(--transition);
+    background: var(--bg-surface-hover);
+}
+
+.avatar-preset-option:hover,
+.avatar-preset-option.selected {
+    border-color: var(--primary);
+    transform: scale(1.08);
+    box-shadow: 0 0 16px var(--primary-glow);
+}
+
 /* ==========================================================================
    RESPONSIVE DESIGN BREAKPOINTS
    ========================================================================== */

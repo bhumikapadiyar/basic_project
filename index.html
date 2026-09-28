@@ -665,8 +665,16 @@
                                 <div class="profile-upload-row">
                                     <img id="settings-avatar-preview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar">
                                     <div>
-                                        <button type="button" class="btn-outline btn-sm" id="btn-change-avatar">Change Avatar</button>
-                                        <p class="text-xs text-muted mt-1">JPG or PNG. Max size 2MB.</p>
+                                        <div class="avatar-btn-group" style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+                                            <button type="button" class="btn-outline btn-sm" id="btn-change-avatar">
+                                                <i data-lucide="upload"></i> Upload Image
+                                            </button>
+                                            <button type="button" class="btn-outline btn-sm" id="btn-preset-avatar">
+                                                <i data-lucide="image"></i> Pick Preset
+                                            </button>
+                                        </div>
+                                        <input type="file" id="avatar-file-input" accept="image/*" class="hidden">
+                                        <p class="text-xs text-muted mt-1">JPG, PNG, or GIF. Max size 2MB.</p>
                                     </div>
                                 </div>
 
@@ -798,6 +806,37 @@
         </div>
     </div>
 
+
+    <!-- Avatar Selection Modal -->
+    <div id="modal-avatar" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Select Profile Avatar</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-avatar-modal">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="text-sm text-muted">Choose from our avatar gallery or upload your custom photo from your computer:</p>
+                <div class="avatar-presets-grid" id="avatar-presets-container">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80" class="avatar-preset-option selected" alt="Avatar Option 1">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80" class="avatar-preset-option" alt="Avatar Option 2">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80" class="avatar-preset-option" alt="Avatar Option 3">
+                    <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&auto=format&fit=crop&q=80" class="avatar-preset-option" alt="Avatar Option 4">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80" class="avatar-preset-option" alt="Avatar Option 5">
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&auto=format&fit=crop&q=80" class="avatar-preset-option" alt="Avatar Option 6">
+                    <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=120&auto=format&fit=crop&q=80" class="avatar-preset-option" alt="Avatar Option 7">
+                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=120&auto=format&fit=crop&q=80" class="avatar-preset-option" alt="Avatar Option 8">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-outline" id="btn-trigger-file-upload">
+                    <i data-lucide="upload"></i> Upload From Device
+                </button>
+                <button type="button" class="btn-primary" id="btn-save-avatar-modal">Save Selection</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Custom JavaScript Files -->
     <script src="js/auth.js"></script>

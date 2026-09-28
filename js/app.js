@@ -597,6 +597,77 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- 13. AVATAR UPLOADER & PRESET PICKER ---
+    const btnChangeAvatar = document.getElementById('btn-change-avatar');
+    const btnPresetAvatar = document.getElementById('btn-preset-avatar');
+    const avatarFileInput = document.getElementById('avatar-file-input');
+    const modalAvatar = document.getElementById('modal-avatar');
+    const btnCloseAvatarModal = document.getElementById('btn-close-avatar-modal');
+    const btnSaveAvatarModal = document.getElementById('btn-save-avatar-modal');
+    const btnTriggerFileUpload = document.getElementById('btn-trigger-file-upload');
+
+    const updateAvatar = (newAvatarUrl) => {
+        const avatars = ['sidebar-user-avatar', 'header-user-avatar', 'settings-avatar-preview'];
+        avatars.forEach(id => {
+            const img = document.getElementById(id);
+            if (img) img.src = newAvatarUrl;
+        });
+
+        const currentUser = AuthModule.getCurrentUser();
+        if (currentUser) {
+            currentUser.avatar = newAvatarUrl;
+            AuthModule.setSession(currentUser);
+        }
+        showToast('Profile avatar updated successfully!', 'success');
+    };
+
+    // Trigger local file upload from button
+    if (btnChangeAvatar && avatarFileInput) {
+        btnChangeAvatar.addEventListener('click', () => avatarFileInput.click());
+    }
+
+    if (btnTriggerFileUpload && avatarFileInput) {
+        btnTriggerFileUpload.addEventListener('click', () => avatarFileInput.click());
+    }
+
+    // Open avatar presets modal
+    if (btnPresetAvatar && modalAvatar) {
+        btnPresetAvatar.addEventListener('click', () => modalAvatar.classList.remove('hidden'));
+    }
+
+    // Close avatar modal
+    const closeAvatarModal = () => modalAvatar && modalAvatar.classList.add('hidden');
+    if (btnCloseAvatarModal) btnCloseAvatarModal.addEventListener('click', closeAvatarModal);
+    if (btnSaveAvatarModal) btnSaveAvatarModal.addEventListener('click', closeAvatarModal);
+
+    // Read selected file from device
+    if (avatarFileInput) {
+        avatarFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    showToast('File size exceeds 2MB limit. Please choose a smaller image.', 'error');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    updateAvatar(evt.target.result);
+                    closeAvatarModal();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Preset avatar image click selection
+    document.querySelectorAll('.avatar-preset-option').forEach(img => {
+        img.addEventListener('click', () => {
+            document.querySelectorAll('.avatar-preset-option').forEach(i => i.classList.remove('selected'));
+            img.classList.add('selected');
+            updateAvatar(img.src);
+        });
+    });
+
     // Settings Form Save
     const settingsProfileForm = document.getElementById('settings-profile-form');
     if (settingsProfileForm) {

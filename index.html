@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus - Modern Analytics & Dashboard</title>
+    <meta name="description" content="A powerful modern web dashboard featuring secure sign-in, user registration, real-time analytics, and dynamic metrics.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Chart.js for data visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Toast Notification System -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- ========================================== -->
+    <!-- AUTHENTICATION VIEW (SIGN IN / SIGN UP)   -->
+    <!-- ========================================== -->
+    <div id="auth-screen" class="auth-screen">
+        <div class="auth-background">
+            <div class="glow-orb orb-1"></div>
+            <div class="glow-orb orb-2"></div>
+            <div class="grid-overlay"></div>
+        </div>
+
+        <div class="auth-container">
+            <!-- Auth Brand Header -->
+            <div class="auth-brand">
+                <div class="brand-icon">
+                    <i data-lucide="zap"></i>
+                </div>
+                <h2>Nexus<span>UI</span></h2>
+                <p>Enterprise Analytics & Dashboard Engine</p>
+            </div>
+
+            <!-- Auth Card -->
+            <div class="auth-card">
+                <!-- Tab Switcher -->
+                <div class="auth-tabs" role="tablist">
+                    <button class="tab-btn active" id="tab-signin" role="tab" aria-selected="true" data-target="signin-form">
+                        <i data-lucide="log-in"></i> Sign In
+                    </button>
+                    <button class="tab-btn" id="tab-signup" role="tab" aria-selected="false" data-target="signup-form">
+                        <i data-lucide="user-plus"></i> Sign Up
+                    </button>
+                </div>
+
+                <!-- Quick Demo Sign In Banner -->
+                <div class="demo-banner">
+                    <div class="demo-info">
+                        <span class="badge-accent">Demo Access</span>
+                        <p>Explore with pre-configured credentials</p>
+                    </div>
+                    <button type="button" id="btn-quick-demo" class="btn-demo">
+                        <i data-lucide="sparkles"></i> 1-Click Demo Log In
+                    </button>
+                </div>
+
+                <!-- SIGN IN FORM -->
+                <form id="signin-form" class="auth-form active-form" novalidate>
+                    <div class="form-header">
+                        <h3>Welcome back</h3>
+                        <p>Enter your credentials to access your dashboard workspace</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signin-email">Email Address</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="mail" class="input-icon"></i>
+                            <input type="email" id="signin-email" placeholder="name@company.com" required autocomplete="email">
+                        </div>
+                        <span class="error-msg" id="signin-email-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="signin-password">Password</label>
+                            <a href="#" id="link-forgot-pw" class="link-muted">Forgot password?</a>
+                        </div>
+                        <div class="input-wrapper">
+                            <i data-lucide="lock" class="input-icon"></i>
+                            <input type="password" id="signin-password" placeholder="••••••••" required autocomplete="current-password">
+                            <button type="button" class="btn-toggle-pw" title="Toggle password visibility">
+                                <i data-lucide="eye" class="eye-icon"></i>
+                            </button>
+                        </div>
+                        <span class="error-msg" id="signin-password-error"></span>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="signin-remember" checked>
+                            <span class="checkmark"></span>
+                            <span>Remember this device for 30 days</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-primary btn-block" id="btn-submit-signin">
+                        <span>Sign In to Dashboard</span>
+                        <i data-lucide="arrow-right"></i>
+                    </button>
+
+                    <div class="auth-divider">
+                        <span>or sign in with</span>
+                    </div>
+
+                    <div class="social-auth">
+                        <button type="button" class="btn-social" id="btn-social-google">
+                            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.2 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15s.7 5.3 1.9 7.7l3.7-2.9c-.8-1.5-1.2-3.3-1.2-5z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.2-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/></svg>
+                            Google
+                        </button>
+                        <button type="button" class="btn-social" id="btn-social-github">
+                            <i data-lucide="github"></i>
+                            GitHub
+                        </button>
+                    </div>
+                </form>
+
+                <!-- SIGN UP FORM -->
+                <form id="signup-form" class="auth-form hidden-form" novalidate>
+                    <div class="form-header">
+                        <h3>Create your account</h3>
+                        <p>Join over 10,000+ teams managing their metrics with Nexus</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signup-name">Full Name</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="user" class="input-icon"></i>
+                            <input type="text" id="signup-name" placeholder="Alex Morgan" required autocomplete="name">
+                        </div>
+                        <span class="error-msg" id="signup-name-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signup-email">Work Email</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="mail" class="input-icon"></i>
+                            <input type="email" id="signup-email" placeholder="alex@company.com" required autocomplete="email">
+                        </div>
+                        <span class="error-msg" id="signup-email-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signup-role">Role / Department</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="briefcase" class="input-icon"></i>
+                            <select id="signup-role" required>
+                                <option value="Administrator">Administrator / Exec</option>
+                                <option value="Product Manager">Product Manager</option>
+                                <option value="Software Engineer" selected>Software Engineer</option>
+                                <option value="Data Analyst">Data Analyst</option>
+                                <option value="Designer">UI/UX Designer</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="lock" class="input-icon"></i>
+                            <input type="password" id="signup-password" placeholder="At least 8 characters" required autocomplete="new-password">
+                            <button type="button" class="btn-toggle-pw" title="Toggle password visibility">
+                                <i data-lucide="eye" class="eye-icon"></i>
+                            </button>
+                        </div>
+                        <!-- Password Strength Indicator -->
+                        <div class="pw-strength-meter">
+                            <div class="strength-bar"><div id="strength-fill" class="strength-fill"></div></div>
+                            <span id="strength-text" class="strength-text">Password strength</span>
+                        </div>
+                        <span class="error-msg" id="signup-password-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signup-confirm-password">Confirm Password</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="shield-check" class="input-icon"></i>
+                            <input type="password" id="signup-confirm-password" placeholder="Re-enter password" required autocomplete="new-password">
+                        </div>
+                        <span class="error-msg" id="signup-confirm-password-error"></span>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="signup-terms" required>
+                            <span class="checkmark"></span>
+                            <span>I agree to the <a href="#" class="link-accent">Terms of Service</a> and <a href="#" class="link-accent">Privacy Policy</a></span>
+                        </label>
+                        <span class="error-msg" id="signup-terms-error"></span>
+                    </div>
+
+                    <button type="submit" class="btn-primary btn-block" id="btn-submit-signup">
+                        <span>Create Account</span>
+                        <i data-lucide="user-check"></i>
+                    </button>
+                </form>
+            </div>
+            
+            <p class="auth-footer-text">Protected by 256-bit SSL Encryption &bull; Nexus Cloud v3.4.0</p>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- MAIN DASHBOARD APPLICATION VIEW            -->
+    <!-- ========================================== -->
+    <div id="dashboard-screen" class="dashboard-screen hidden">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <div class="brand-icon-sm">
+                        <i data-lucide="zap"></i>
+                    </div>
+                    <span class="brand-text">Nexus<span>UI</span></span>
+                </div>
+                <button type="button" id="btn-close-mobile-sidebar" class="btn-icon-ghost mobile-only">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">MAIN MENU</div>
+                <a href="#overview" class="nav-item active" data-view="overview">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="#analytics" class="nav-item" data-view="analytics">
+                    <i data-lucide="line-chart"></i>
+                    <span>Analytics</span>
+                    <span class="nav-badge">Live</span>
+                </a>
+                <a href="#users" class="nav-item" data-view="users">
+                    <i data-lucide="users"></i>
+                    <span>Team & Members</span>
+                </a>
+                <a href="#activity" class="nav-item" data-view="activity">
+                    <i data-lucide="activity"></i>
+                    <span>Activity Log</span>
+                </a>
+
+                <div class="nav-section-title">SYSTEM</div>
+                <a href="#settings" class="nav-item" data-view="settings">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <!-- Sidebar User Card at Bottom -->
+            <div class="sidebar-user-card">
+                <div class="user-avatar-wrapper">
+                    <img id="sidebar-user-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="User Avatar">
+                    <span class="status-indicator online"></span>
+                </div>
+                <div class="user-info-text">
+                    <h4 id="sidebar-user-name">Alex Morgan</h4>
+                    <p id="sidebar-user-role">Administrator</p>
+                </div>
+                <button type="button" id="btn-quick-signout" class="btn-icon-ghost" title="Sign Out">
+                    <i data-lucide="log-out"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <div class="main-wrapper">
+            <!-- Top Navbar -->
+            <header class="top-navbar">
+                <div class="navbar-left">
+                    <button type="button" id="btn-toggle-sidebar" class="btn-icon-ghost">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <!-- Global Search Bar -->
+                    <div class="search-box">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input type="text" id="global-search-input" placeholder="Search metrics, team members, transactions...">
+                        <span class="search-shortcut">⌘K</span>
+                    </div>
+                </div>
+
+                <div class="navbar-right">
+                    <!-- Live System Status Badge -->
+                    <div class="system-status-pill desktop-only">
+                        <span class="pulse-dot green"></span>
+                        <span>Systems Operational</span>
+                    </div>
+
+                    <!-- Theme Switcher -->
+                    <button type="button" id="btn-theme-toggle" class="btn-icon-ghost" title="Toggle Theme">
+                        <i data-lucide="sun" class="sun-icon"></i>
+                        <i data-lucide="moon" class="moon-icon"></i>
+                    </button>
+
+                    <!-- Quick Add Modal Trigger Button -->
+                    <button type="button" id="btn-open-new-transaction" class="btn-primary btn-sm">
+                        <i data-lucide="plus"></i>
+                        <span class="desktop-only">New Transaction</span>
+                    </button>
+
+                    <!-- Notifications Dropdown -->
+                    <div class="dropdown-wrapper">
+                        <button type="button" id="btn-notifications" class="btn-icon-ghost notification-btn">
+                            <i data-lucide="bell"></i>
+                            <span class="notification-count" id="notification-count">3</span>
+                        </button>
+                        <div id="notifications-menu" class="dropdown-menu notifications-dropdown">
+                            <div class="dropdown-header">
+                                <h4>Notifications</h4>
+                                <button type="button" id="btn-mark-notifications-read" class="link-accent text-xs">Mark all read</button>
+                            </div>
+                            <div class="notifications-list" id="notifications-list">
+                                <div class="notification-item unread">
+                                    <div class="notif-icon primary"><i data-lucide="user-check"></i></div>
+                                    <div class="notif-content">
+                                        <p><strong>Sarah Jenkins</strong> joined the engineering team.</p>
+                                        <span class="notif-time">10 minutes ago</span>
+                                    </div>
+                                </div>
+                                <div class="notification-item unread">
+                                    <div class="notif-icon success"><i data-lucide="trending-up"></i></div>
+                                    <div class="notif-content">
+                                        <p>Monthly revenue reached target of <strong>$120,000</strong>.</p>
+                                        <span class="notif-time">1 hour ago</span>
+                                    </div>
+                                </div>
+                                <div class="notification-item unread">
+                                    <div class="notif-icon warning"><i data-lucide="alert-triangle"></i></div>
+                                    <div class="notif-content">
+                                        <p>Database backup completed with 2 minor warnings.</p>
+                                        <span class="notif-time">3 hours ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Profile Dropdown -->
+                    <div class="dropdown-wrapper">
+                        <button type="button" id="btn-user-profile-menu" class="user-profile-trigger">
+                            <img id="header-user-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Profile">
+                            <span class="desktop-only" id="header-user-name">Alex Morgan</span>
+                            <i data-lucide="chevron-down" class="desktop-only"></i>
+                        </button>
+                        <div id="user-menu" class="dropdown-menu user-dropdown">
+                            <div class="user-menu-header">
+                                <p class="user-full-name" id="menu-user-name">Alex Morgan</p>
+                                <p class="user-email-text" id="menu-user-email">alex@nexus.io</p>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="#settings" class="dropdown-item nav-trigger-link" data-view="settings">
+                                <i data-lucide="user"></i> Account Settings
+                            </a>
+                            <a href="#activity" class="dropdown-item nav-trigger-link" data-view="activity">
+                                <i data-lucide="clock"></i> Activity Logs
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <button type="button" id="btn-signout-main" class="dropdown-item text-danger">
+                                <i data-lucide="log-out"></i> Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dynamic Main Content Area -->
+            <main class="dashboard-content">
+
+                <!-- 1. OVERVIEW VIEW -->
+                <section id="view-overview" class="view-section active-view">
+                    <!-- Welcome Hero Card -->
+                    <div class="welcome-hero-card">
+                        <div class="hero-text">
+                            <span class="greeting-time" id="greeting-time">Good Morning,</span>
+                            <h1 id="welcome-user-name">Alex Morgan 👋</h1>
+                            <p>Here is your real-time performance summary and metrics overview for today.</p>
+                        </div>
+                        <div class="hero-actions">
+                            <div class="live-clock-card">
+                                <i data-lucide="clock"></i>
+                                <span id="live-clock">12:00:00 PM</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KPI Metric Cards Grid -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                <div class="kpi-icon-box primary">
+                                    <i data-lucide="dollar-sign"></i>
+                                </div>
+                                <span class="trend-badge positive">
+                                    <i data-lucide="trending-up"></i> +14.2%
+                                </span>
+                            </div>
+                            <div class="kpi-body">
+                                <span class="kpi-label">Total Revenue</span>
+                                <h2 class="kpi-value" id="kpi-revenue">$128,450.00</h2>
+                                <p class="kpi-subtext">vs $112,400.00 last month</p>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                <div class="kpi-icon-box success">
+                                    <i data-lucide="users"></i>
+                                </div>
+                                <span class="trend-badge positive">
+                                    <i data-lucide="trending-up"></i> +8.5%
+                                </span>
+                            </div>
+                            <div class="kpi-body">
+                                <span class="kpi-label">Active Customers</span>
+                                <h2 class="kpi-value" id="kpi-users">8,420</h2>
+                                <p class="kpi-subtext">+640 new registrations</p>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                <div class="kpi-icon-box warning">
+                                    <i data-lucide="shopping-bag"></i>
+                                </div>
+                                <span class="trend-badge positive">
+                                    <i data-lucide="trending-up"></i> +2.3%
+                                </span>
+                            </div>
+                            <div class="kpi-body">
+                                <span class="kpi-label">Monthly Orders</span>
+                                <h2 class="kpi-value" id="kpi-orders">1,245</h2>
+                                <p class="kpi-subtext">Avg order value: $103.17</p>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card">
+                            <div class="kpi-header">
+                                <div class="kpi-icon-box info">
+                                    <i data-lucide="zap"></i>
+                                </div>
+                                <span class="trend-badge neutral">
+                                    <i data-lucide="check-circle-2"></i> 99.98%
+                                </span>
+                            </div>
+                            <div class="kpi-body">
+                                <span class="kpi-label">API Health & Speed</span>
+                                <h2 class="kpi-value" id="kpi-speed">42 ms</h2>
+                                <p class="kpi-subtext">Response latency</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="charts-grid">
+                        <!-- Main Revenue Chart -->
+                        <div class="chart-card main-chart-card">
+                            <div class="chart-header">
+                                <div>
+                                    <h3>Revenue & User Growth Dynamics</h3>
+                                    <p class="chart-subtitle">Real-time revenue tracking across all active projects</p>
+                                </div>
+                                <div class="chart-controls">
+                                    <button type="button" class="chart-filter-btn active" data-period="7d">7 Days</button>
+                                    <button type="button" class="chart-filter-btn" data-period="30d">30 Days</button>
+                                    <button type="button" class="chart-filter-btn" data-period="1y">1 Year</button>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="revenueChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Secondary Traffic Sources Chart -->
+                        <div class="chart-card side-chart-card">
+                            <div class="chart-header">
+                                <div>
+                                    <h3>Traffic Breakdown</h3>
+                                    <p class="chart-subtitle">Acquisition Channels</p>
+                                </div>
+                            </div>
+                            <div class="chart-container donut-container">
+                                <canvas id="trafficChart"></canvas>
+                            </div>
+                            <div class="traffic-legend" id="traffic-legend">
+                                <div class="legend-item"><span class="dot" style="background:#6366f1"></span> Direct (42%)</div>
+                                <div class="legend-item"><span class="dot" style="background:#10b981"></span> Organic Search (28%)</div>
+                                <div class="legend-item"><span class="dot" style="background:#f59e0b"></span> Referral (18%)</div>
+                                <div class="legend-item"><span class="dot" style="background:#ec4899"></span> Social Media (12%)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Data Table -->
+                    <div class="table-card">
+                        <div class="table-header">
+                            <div>
+                                <h3>Recent Transactions & Billing</h3>
+                                <p class="table-subtitle">Live stream of latest processed payments</p>
+                            </div>
+                            <div class="table-actions">
+                                <div class="filter-select-wrapper">
+                                    <select id="table-filter-status" class="select-input">
+                                        <option value="all">All Statuses</option>
+                                        <option value="Completed">Completed</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Failed">Failed</option>
+                                    </select>
+                                </div>
+                                <button type="button" id="btn-export-data" class="btn-outline btn-sm">
+                                    <i data-lucide="download"></i> Export CSV
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="data-table" id="transactions-table">
+                                <thead>
+                                    <tr>
+                                        <th>Transaction ID</th>
+                                        <th>Customer</th>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                        <th>Category</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transactions-body">
+                                    <!-- Populated dynamically by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="table-footer">
+                            <span class="pagination-info" id="table-page-info">Showing 1 to 5 of 12 transactions</span>
+                            <div class="pagination-buttons">
+                                <button type="button" class="btn-icon-ghost" id="btn-prev-page" disabled><i data-lucide="chevron-left"></i></button>
+                                <button type="button" class="btn-icon-ghost" id="btn-next-page"><i data-lucide="chevron-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. ANALYTICS VIEW -->
+                <section id="view-analytics" class="view-section hidden">
+                    <div class="section-title-bar">
+                        <div>
+                            <h2>Advanced System Analytics</h2>
+                            <p>Deep dive into server workloads, user engagement, and geographic distribution</p>
+                        </div>
+                    </div>
+
+                    <div class="analytics-metrics-row">
+                        <div class="card-widget">
+                            <h4>Session Duration</h4>
+                            <div class="widget-value">4m 32s <span class="trend positive">+12%</span></div>
+                            <div class="progress-bar-sm"><div class="progress-fill" style="width: 76%"></div></div>
+                        </div>
+                        <div class="card-widget">
+                            <h4>Bounce Rate</h4>
+                            <div class="widget-value">24.8% <span class="trend positive">-3.1%</span></div>
+                            <div class="progress-bar-sm"><div class="progress-fill warning" style="width: 25%"></div></div>
+                        </div>
+                        <div class="card-widget">
+                            <h4>Conversion Rate</h4>
+                            <div class="widget-value">4.12% <span class="trend positive">+0.8%</span></div>
+                            <div class="progress-bar-sm"><div class="progress-fill success" style="width: 65%"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="charts-grid mt-4">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3>Hourly Server Load & Throughput</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="analyticsLoadChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3>Top Region Distribution</h3>
+                            </div>
+                            <div class="region-list">
+                                <div class="region-item">
+                                    <span class="region-flag">🇺🇸 United States</span>
+                                    <span class="region-val">45,210 users (48%)</span>
+                                </div>
+                                <div class="region-item">
+                                    <span class="region-flag">🇩🇪 Germany</span>
+                                    <span class="region-val">18,400 users (20%)</span>
+                                </div>
+                                <div class="region-item">
+                                    <span class="region-flag">🇬🇧 United Kingdom</span>
+                                    <span class="region-val">12,150 users (14%)</span>
+                                </div>
+                                <div class="region-item">
+                                    <span class="region-flag">🇯🇵 Japan</span>
+                                    <span class="region-val">9,800 users (10%)</span>
+                                </div>
+                                <div class="region-item">
+                                    <span class="region-flag">🇮🇳 India</span>
+                                    <span class="region-val">7,400 users (8%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. TEAM & MEMBERS VIEW -->
+                <section id="view-users" class="view-section hidden">
+                    <div class="section-title-bar">
+                        <div>
+                            <h2>Team Members & Access Control</h2>
+                            <p>Manage member roles, permissions, and organization security</p>
+                        </div>
+                        <button type="button" id="btn-add-team-member" class="btn-primary">
+                            <i data-lucide="user-plus"></i> Invite Team Member
+                        </button>
+                    </div>
+
+                    <div class="team-grid" id="team-cards-grid">
+                        <!-- Populated by JS -->
+                    </div>
+                </section>
+
+                <!-- 4. ACTIVITY LOG VIEW -->
+                <section id="view-activity" class="view-section hidden">
+                    <div class="section-title-bar">
+                        <div>
+                            <h2>Audit & Activity Stream</h2>
+                            <p>Immutable log of administrative changes, security alerts, and logins</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-container">
+                        <div class="timeline" id="activity-timeline">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. SETTINGS VIEW -->
+                <section id="view-settings" class="view-section hidden">
+                    <div class="section-title-bar">
+                        <div>
+                            <h2>Account Settings & Profile</h2>
+                            <p>Update your personal information, security, and notification preferences</p>
+                        </div>
+                    </div>
+
+                    <div class="settings-grid">
+                        <div class="settings-card">
+                            <h3>Public Profile</h3>
+                            <form id="settings-profile-form">
+                                <div class="profile-upload-row">
+                                    <img id="settings-avatar-preview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar">
+                                    <div>
+                                        <button type="button" class="btn-outline btn-sm" id="btn-change-avatar">Change Avatar</button>
+                                        <p class="text-xs text-muted mt-1">JPG or PNG. Max size 2MB.</p>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mt-3">
+                                    <label for="settings-name">Full Name</label>
+                                    <input type="text" id="settings-name" value="Alex Morgan" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="settings-email">Email Address</label>
+                                    <input type="email" id="settings-email" value="alex@nexus.io" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="settings-role">Role</label>
+                                    <input type="text" id="settings-role" value="Administrator" class="form-control" disabled>
+                                </div>
+                                <button type="submit" class="btn-primary">Save Profile Changes</button>
+                            </form>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Security & Authentication</h3>
+                            <form id="settings-security-form">
+                                <div class="form-group">
+                                    <label for="settings-curr-password">Current Password</label>
+                                    <input type="password" id="settings-curr-password" placeholder="••••••••" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="settings-new-password">New Password</label>
+                                    <input type="password" id="settings-new-password" placeholder="••••••••" class="form-control">
+                                </div>
+                                <button type="submit" class="btn-outline">Update Password</button>
+                            </form>
+
+                            <div class="divider mt-4"></div>
+                            <h4 class="mt-3">Two-Factor Authentication</h4>
+                            <p class="text-sm text-muted">Add an extra layer of security to your account.</p>
+                            <button type="button" class="btn-secondary btn-sm mt-2" id="btn-enable-2fa">Enable 2FA (Authenticator App)</button>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- MODALS                                     -->
+    <!-- ========================================== -->
+
+    <!-- Add Transaction Modal -->
+    <div id="modal-transaction" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Record New Transaction</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-transaction-modal">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <form id="form-new-transaction">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="tx-customer">Customer Name</label>
+                        <input type="text" id="tx-customer" placeholder="e.g. Acme Corp" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tx-amount">Amount ($)</label>
+                        <input type="number" id="tx-amount" step="0.01" placeholder="99.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tx-category">Category</label>
+                        <select id="tx-category" required>
+                            <option value="Enterprise License">Enterprise License</option>
+                            <option value="SaaS Subscription">SaaS Subscription</option>
+                            <option value="Professional Services">Professional Services</option>
+                            <option value="API Usage">API Usage</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="tx-status">Status</label>
+                        <select id="tx-status" required>
+                            <option value="Completed" selected>Completed</option>
+                            <option value="Pending">Pending</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" id="btn-cancel-transaction">Cancel</button>
+                    <button type="submit" class="btn-primary">Add Entry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Team Member Modal -->
+    <div id="modal-team" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Invite Team Member</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-team-modal">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <form id="form-new-team">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="member-name">Member Name</label>
+                        <input type="text" id="member-name" placeholder="e.g. David Kim" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="member-email">Email Address</label>
+                        <input type="email" id="member-email" placeholder="david@company.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="member-role">Role</label>
+                        <select id="member-role" required>
+                            <option value="Software Engineer">Software Engineer</option>
+                            <option value="Product Manager">Product Manager</option>
+                            <option value="Data Analyst">Data Analyst</option>
+                            <option value="Designer">Designer</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" id="btn-cancel-team">Cancel</button>
+                    <button type="submit" class="btn-primary">Send Invitation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Custom JavaScript Files -->
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
